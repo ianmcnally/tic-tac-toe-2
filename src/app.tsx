@@ -13,10 +13,6 @@ function Tile({ children, onClick }: any) {
   )
 }
 
-function tilesAreCharacter(character: string, ...tiles: any[]) {
-  return tiles.every((tile) => tile === character)
-}
-
 function checkIfWinner(
   character: string,
   row: number,
