@@ -13,24 +13,34 @@ function Tile({ children, onClick }: any) {
   )
 }
 
+function tilesAreCharacter(character: string, ...tiles: any[]) {
+  return tiles.every((tile) => tile === character)
+}
+
 function checkIfWinner(
   character: string,
   row: number,
   column: number,
   tiles: any[]
 ) {
-  const horizontal =
-    tiles[row][(column + 1) % 3] === character &&
-    tiles[row][(column + 2) % 3] === character
+  function tilesAreCharacter(...tiles: any[]) {
+    return tiles.every((tile) => tile === character)
+  }
 
-  const vertical =
-    tiles[(row + 1) % 3][column] === character &&
-    tiles[(row + 2) % 3][column] === character
+  const horizontal = tilesAreCharacter(
+    tiles[row][(column + 1) % 3],
+    tiles[row][(column + 2) % 3]
+  )
+
+  const vertical = tilesAreCharacter(
+    tiles[(row + 1) % 3][column],
+    tiles[(row + 2) % 3][column]
+  )
 
   const diagonal =
-    tiles[1][1] === character &&
-    ((tiles[0][0] === character && tiles[2][2] === character) ||
-      (tiles[0][2] === character && tiles[2][0] === character))
+    tilesAreCharacter(tiles[1][1]) &&
+    (tilesAreCharacter(tiles[0][0], tiles[2][2]) ||
+      tilesAreCharacter(tiles[0][2], tiles[2][0]))
 
   return horizontal || vertical || diagonal
 }
