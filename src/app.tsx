@@ -22,12 +22,15 @@ function checkIfWinner(
   const horizontal =
     tiles[row][(column + 1) % 3] === character &&
     tiles[row][(column + 2) % 3] === character
+
   const vertical =
     tiles[(row + 1) % 3][column] === character &&
     tiles[(row + 2) % 3][column] === character
+
   const diagonal =
-    tiles[(row + 1) % 3][(column + 1) % 3] === character &&
-    tiles[(row + 2) % 3][(column + 2) % 3] === character
+    tiles[1][1] === character &&
+    ((tiles[0][0] === character && tiles[2][2] === character) ||
+      (tiles[0][2] === character && tiles[2][0] === character))
 
   return horizontal || vertical || diagonal
 }
