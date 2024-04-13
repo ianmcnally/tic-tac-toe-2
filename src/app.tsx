@@ -27,7 +27,7 @@ function checkIfWinner(
     tiles[(row + 2) % 3][column] === character
   const diagonal =
     tiles[(row + 1) % 3][(column + 1) % 3] === character &&
-    tiles[(row + 2) % 3][(column + 1) % 3] === character
+    tiles[(row + 2) % 3][(column + 2) % 3] === character
 
   return horizontal || vertical || diagonal
 }
