@@ -1,17 +1,5 @@
-import React, { useState } from "react"
+import React, { useReducer, useState } from "react"
 import styles from "./app.module.css"
-
-function Board({ children }: any) {
-  return <div className={styles.board}>{children}</div>
-}
-
-function Tile({ children, onClick }: any) {
-  return (
-    <div className={styles.tile} onClick={onClick}>
-      {children}
-    </div>
-  )
-}
 
 function checkIfWinner(
   character: string,
@@ -52,47 +40,85 @@ function emptyBoard(): any[] {
   return [[...emptyRow], [...emptyRow], [...emptyRow]]
 }
 
+function Board({ children }: any) {
+  return <div className={styles.board}>{children}</div>
+}
+
+function Tile({ children, onClick }: any) {
+  return (
+    <div className={styles.tile} onClick={onClick}>
+      {children}
+    </div>
+  )
+}
+
+const initialState = {
+  character: "X",
+  isOutOfTurns: false,
+  winner: "",
+  tiles: emptyBoard(),
+}
+
+function reducer(state: any, action: any) {
+  switch (action.type) {
+    case "turn": {
+      const { character } = state
+      const { column, row } = action
+      const tiles = [...state.tiles]
+
+      tiles[action.row][action.column] = state.character
+
+      const isWinner = checkIfWinner(character, row, column, tiles)
+      const isComplete = !isWinner && checkComplete(tiles)
+
+      return {
+        ...state,
+        tiles,
+        character: character === "X" ? "O" : "X",
+        winner: isWinner ? character : "",
+        isOutOfTurns: isComplete,
+      }
+    }
+    case "restart": {
+      return {
+        ...state,
+        character: "X",
+        winner: "",
+        isOutOfTurns: false,
+        tiles: emptyBoard(),
+      }
+    }
+    default:
+      return state
+  }
+}
+
 export function App() {
-  const [tiles, setTiles] = useState(emptyBoard())
-  const [character, setCharacter] = useState("X")
-  const [winner, setWinner] = useState("")
-  const [isComplete, setIsComplete] = useState(false)
+  const [state, dispatch] = useReducer(reducer, initialState)
+  const { character, winner, isOutOfTurns, tiles } = state
 
   function startOver() {
-    setCharacter("X")
-    setWinner("")
-    setIsComplete(false)
-    setTiles(emptyBoard())
+    dispatch({ type: "restart" })
   }
 
   function setCurrentTile(rowIndex: number, columnIndex: number) {
-    if (winner || isComplete) {
+    if (winner || isOutOfTurns) {
       return
     }
 
-    tiles[rowIndex][columnIndex] = character
-    setTiles([...tiles])
-
-    if (checkIfWinner(character, rowIndex, columnIndex, tiles)) {
-      setWinner(character)
-    } else if (checkComplete(tiles)) {
-      setIsComplete(true)
-    } else {
-      const nextCharacter = character === "X" ? "O" : "X"
-      setCharacter(nextCharacter)
-    }
+    dispatch({ type: "turn", row: rowIndex, column: columnIndex })
   }
 
   return (
     <>
-      {isComplete ? <p>Game over</p> : null}
+      {isOutOfTurns ? <p>Game over</p> : null}
       {winner ? <p>Winner is: {winner}</p> : null}
-      {!isComplete && !winner ? <p>Current player: {character}</p> : null}
+      {!isOutOfTurns && !winner ? <p>Current player: {character}</p> : null}
       <button type="button" onClick={startOver}>
         Start over
       </button>
       <Board>
-        {tiles.map((row, rowIndex) =>
+        {tiles.map((row: any, rowIndex: number) =>
           row.map((tile: any, columnIndex: number) => (
             <Tile
               key={columnIndex}
