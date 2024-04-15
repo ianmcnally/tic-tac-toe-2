@@ -66,7 +66,7 @@ function reducer(state: any, action: any) {
       const { column, row } = action
       const tiles = [...state.tiles]
 
-      tiles[action.row][action.column] = state.character
+      tiles[action.row][action.column] = character
 
       const isWinner = checkIfWinner(character, row, column, tiles)
       const isComplete = !isWinner && checkComplete(tiles)
