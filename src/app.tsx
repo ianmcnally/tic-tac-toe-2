@@ -101,12 +101,12 @@ export function App() {
     dispatch({ type: "restart" })
   }
 
-  function setCurrentTile(rowIndex: number, columnIndex: number) {
+  function setCurrentTile(row: number, column: number) {
     if (winner || isOutOfTurns) {
       return
     }
 
-    dispatch({ type: "turn", row: rowIndex, column: columnIndex })
+    dispatch({ type: "turn", row, column })
   }
 
   return (
